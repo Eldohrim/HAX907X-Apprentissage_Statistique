@@ -10,7 +10,9 @@ Dans le fichier `tp_knn_source.py`, nous avons à notre dispositions des fonctio
 - `rand_clown`: produit un échantillon de deux variables différentes : `x_1` est un vecteur aléatoire formant une parabole à une erreur gaussienne près(groupe du sourire du clown=1) et `x_2` est la réalisation d'un vecteur gaussien (groupe du nez du clown=-1).
 
 La dernière colonne correspond à la classe de la realisation $i$.
+Pour mieux visualiser, voici un graphique tracé avec la fonction `plot2d` de `tp_knn_source.py` : 
 
+![](./plot/visu_data.png "Visualisation des datasets")
 ## La méthode
 
 ### Approche intuitive 
