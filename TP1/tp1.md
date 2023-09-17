@@ -54,18 +54,49 @@ class KNNClassifier(BaseEstimator, ClassifierMixin):
 
 ```
 
-Les performances des deux méthodes sont données dans le tableau ci-dessous : 
+Les performances des deux méthodes sont données dans le tableau ci-dessous à l'aide de `rand_tri_gauss`: 
 
-<div align="center">
 | Classe  | KNNClassifier          | KNeighborsClassifier |
 | :------------|:-------------:| :-------------:|
 | Performance  |   0.813        |    0.813 |
-</div>
+: Comparaison des performances
+
+On voit ici que les performances sont assez similaires, mais à partir de maintenant nous allons utiliser la classe de `scikit-learn` pour gagner en temps de calcul.
+
+Voici, dans le cas de `rand_checkers`, ce que donne l'algorithme pour `n_neighbors=5` : 
 
 
-Rajouter une dimension 
-```
-import numpy
-X = np.random.rand(100,2)
-X[:,np.newaxis,:]
-```
+
+Nous avons calculer ce que donne la méthode pour différentes valeurs du nombre de voisin. On obtient les régions suivantes : 
+
+![](./plot/visu_diffk.png "Changement du nombre de voisin pour rand_tri_gauss")
+
+On peut s'intéresser aux cas extrême où :
+- $k=1$ : il suffit de regarder la classe de l'individu le plus proche.
+- $k=n$ : tous les individus possèdent la classe qui apparait le plus souvent dans nos données d'apprentissage.
+
+Les voici tracés :
+
+
+
+On peut remarquer par ailleurs en regardant l'image pour différentes valeurs du nombre de voisin que plus celui-ci diminue, plus la frontière entre les classes devient complexe : on gagne en biais ce que l'on va perdre en variance. Il nous faut donc trouver un compromis pour trouver le nombre de voisin optimal.
+
+Pour ce faire, nous allons utiliser la classe `ErrorCurve` fournie dans `tp_knn_source.py` pour tracer la courbe d'erreur en fonction du paramètre $k$. Voici ce que l'on obtient `rand_checkers` lorsque la taille de l'échantillon vaut 1000.
+
+![](./plot/visu_error.png "Visualisation de l'erreur")
+
+Ici, on voit que le nombre de voisin optimal est de $13$. En réiterant ce procéder pour d'autres valeurs de la taille de l'échantillon et d'autres datasets, on remarque que la valeur de ce $k$ optimal change.
+
+
+FAIRE LA 7
+
+
+Appliquons maintenant cette méthode dans un cadre plus concret. Nous allons considérer la base de données DIGITS : il s'agit d'image représentant des chiffres, la classe de l'image correspondant au chiffre écrit. Traçons tout d'abord la courbe de précision pour différentes valeurs de $k$ : 
+![](./plot/visu_accdigits.png "Visualisation de l'erreur")
+
+
+Un moyen de visualiser aussi la performance de notre méthode est de regarder la confusion. Cette denière est définie par 
+
+$$
+M_{i,j} = (\mathbb{P}\{Y=i, C_k(X)=j\})_{i,j}
+$$

@@ -178,6 +178,7 @@ for X, y in [(X1, y1), (X2, y2), (X3, y3), (X4, y4)]:
               n_labels=n_labels, n_neighbors=n_neighbors)
     plt.draw()
 
+
 #%%
 # Q4: Display the result when varying the value of K
 
@@ -203,7 +204,7 @@ for n_neighbors in range(1, 11):
 
 plt.draw()  # update plot
 plt.tight_layout()
-
+plt.savefig("./plot/visu_diffk.png")
 
 
 #%%
@@ -228,12 +229,12 @@ Y_train = rep4[::2].astype(int)
 X_test = data4[1::2]
 Y_test = rep4[1::2].astype(int)
 
-error = ErrorCurve(k_range=list(range(1,100)))
+error = ErrorCurve(k_range=list(range(1,50)))
 
 error.fit_curve(X_train, Y_train, X_test, Y_test)
 print(np.argmin(error.errors))
 error.plot()
-
+plt.savefig("./plot/visu_error.png")
 #%%
 ############################################################################
 #     Digits data
@@ -279,16 +280,17 @@ plt.figure()
 plt.hist(Y_digits_test, density=True)
 plt.title("Labels frequency on the test dataset")
 
-score = np.zeros(50)
-for k in range(1,51):
+score = np.zeros(10)
+for k in range(1,50,5):
     knn = neighbors.KNeighborsClassifier(n_neighbors= k)
     knn.fit(X_digits_train, Y_digits_train)
 
-    score[k-1] = knn.score(X_digits_test, Y_digits_test)
+    score[k//5] = knn.score(X_digits_test, Y_digits_test)
     Y_digits_pred = knn.predict(X_digits_test)
 plt.figure()
-plt.plot(score)                                                              
-
+plt.plot(list(range(1,50,5)), score)
+plt.title("Précision sur les données de test")                                                              
+plt.savefig("./plot/visu_accdigits.png")
 #%%
 # Q9 : Compute confusion matrix: use sklearn.metrics.confusion_matrix
 knn = neighbors.KNeighborsClassifier(n_neighbors=3)
