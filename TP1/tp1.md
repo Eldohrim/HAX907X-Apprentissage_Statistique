@@ -12,7 +12,9 @@ Dans le fichier `tp_knn_source.py`, nous avons à notre dispositions des fonctio
 La dernière colonne correspond à la classe de la realisation $i$.
 Pour mieux visualiser, voici un graphique tracé avec la fonction `plot2d` de `tp_knn_source.py` : 
 
-![](./plot/visu_data.png "Visualisation des datasets"){width=75%}
+<p align="center">
+  <img src="./plot/visu_data.png" width="300" title="Visualisation des datasets">
+</p>
 
 ## La méthode
 
@@ -69,7 +71,9 @@ Voici, dans le cas de `rand_checkers`, ce que donne l'algorithme pour `n_neighbo
 
 Nous avons calculer ce que donne la méthode pour différentes valeurs du nombre de voisin. On obtient les régions suivantes : 
 
-![](./plot/visu_diffk.png "Changement du nombre de voisin pour rand_tri_gauss")
+<p align="center">
+  <img src="./plot/visu_diffk.png" width="300" title="Changement du nombre de voisin pour rand_tri_gauss">
+</p>
 
 On peut s'intéresser aux cas extrême où :
 - $k=1$ : il suffit de regarder la classe de l'individu le plus proche.
@@ -83,7 +87,9 @@ On peut remarquer par ailleurs en regardant l'image pour différentes valeurs du
 
 Pour ce faire, nous allons utiliser la classe `ErrorCurve` fournie dans `tp_knn_source.py` pour tracer la courbe d'erreur en fonction du paramètre $k$. Voici ce que l'on obtient `rand_checkers` lorsque la taille de l'échantillon vaut 1000.
 
-![](./plot/visu_error.png "Visualisation de l'erreur")
+<p align="center">
+  <img src="./plot/visu_error.png" width="300" title="Visualisation de l'erreur">
+</p>
 
 Ici, on voit que le nombre de voisin optimal est de $13$. En réiterant ce procéder pour d'autres valeurs de la taille de l'échantillon et d'autres datasets, on remarque que la valeur de ce $k$ optimal change.
 
@@ -92,8 +98,10 @@ FAIRE LA 7
 
 
 Appliquons maintenant cette méthode dans un cadre plus concret. Nous allons considérer la base de données DIGITS : il s'agit d'image représentant des chiffres, la classe de l'image correspondant au chiffre écrit. Traçons tout d'abord la courbe de précision pour différentes valeurs de $k$ : 
-![](./plot/visu_accdigits.png "Visualisation de l'erreur")
 
+<p align="center">
+  <img src="./plot/visu_accdigits.png" width="300" title="Visualisation de l'erreur">
+</p>
 
 Un moyen de visualiser aussi la performance de notre méthode est de regarder la confusion. Cette denière est définie par 
 
@@ -103,17 +111,17 @@ $$
 
 On peut l'estimer à l'aide de `scikit-learn` avec la fonction `metrics.confusion_matrix`. Voici ce que l'on obtient : 
 
-![](./plot/visu_confmat.png "Visualisation de la matrice de confusion")
+<p align="center">
+  <img src="./plot/visu_confmat.png " width="300" title="Visualisation de la matrice de confusion">
+</p>
 
 On constate des valeurs très élevées sur la diagonale ce qui signifie que notre classifieur est assez performant ici (on a pris le cas où le nombre de voisin vaut 3).
 
 
 La grande question est maintenant de savoir quel $k$ choisir. Pour cela, nous allons faire de la validation croisée sur différentes valeurs de $k$, avec l'algorithme "leave-$p$-out". On a accès à la classe `LOOCurve` dans `tp_knn_source.py` qui calcule la courbe d'erreur avec cet algorithme. Voici la courbe obtenue : 
 
-![](./plot/visu_loo.png "Visualisation de l'erreur via LOO")
-
 <p align="center">
-  <img src="./plot/visu_loo.png" width="100" title="Visualisation de l'erreur via LOO">
+  <img src="./plot/visu_loo.png" width="300" title="Visualisation de l'erreur via LOO">
 </p>
 
 On voit ici qu'il n'est pas nécessaire de regarder plus qu'un seul voisin, ce qui peut s'expliquer par la grande dimension du vecteur des données (vu qu'il s'agit d'images).
