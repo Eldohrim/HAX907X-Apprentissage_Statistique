@@ -298,16 +298,18 @@ knn.fit(X_digits_train, Y_digits_train)
 Y_digits_pred = knn.predict(X_digits_test)
 
 # TODO : compute and show confusion matrix
-metrics.confusion_matrix(Y_digits_test, Y_digits_pred)
+mc = metrics.confusion_matrix(Y_digits_test, Y_digits_pred)
+disp = metrics.ConfusionMatrixDisplay(mc)
 
+disp.plot()
+plt.show()
+plt.savefig("./plot/visu_confmat.png")
 #%%
 # Q10 : Estimate k with cross-validation for instance
 
 # Have a look at the class  'LOOCurve', defined in the source file.
 plt.figure()
-loo_curv = LOOCurve(k_range=list(range(1, 50, 5)))
+loo_curv = LOOCurve(k_range=list(range(1, 50, 1)))
 
 loo_curv.fit_curve(digits.data, digits.target)
 loo_curv.plot()
-
-# %%

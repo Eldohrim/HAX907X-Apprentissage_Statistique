@@ -98,5 +98,19 @@ Appliquons maintenant cette méthode dans un cadre plus concret. Nous allons con
 Un moyen de visualiser aussi la performance de notre méthode est de regarder la confusion. Cette denière est définie par 
 
 $$
-M_{i,j} = (\mathbb{P}\{Y=i, C_k(X)=j\})_{i,j}
+M_{i,j} = (\mathbb{P}(Y=i, C_k(X)=j))_{i,j}
 $$
+
+On peut l'estimer à l'aide de `scikit-learn` avec la fonction `metrics.confusion_matrix`. Voici ce que l'on obtient : 
+
+![](./plot/visu_confmat.png "Visualisation de la matrice de confusion")
+
+On constate des valeurs très élevées sur la diagonale ce qui signifie que notre classifieur est assez performant ici (on a pris le cas où le nombre de voisin vaut 3).
+
+
+La grande question est maintenant de savoir quel $k$ choisir. Pour cela, nous allons faire de la validation croisée sur différentes valeurs de $k$, avec l'algorithme "leave-$p$-out". On a accès à la classe `LOOCurve` dans `tp_knn_source.py` qui calcule la courbe d'erreur avec cet algorithme. Voici la courbe obtenue : 
+
+![](./plot/visu_loo.png "Visualisation de l'erreur via LOO")
+
+
+
