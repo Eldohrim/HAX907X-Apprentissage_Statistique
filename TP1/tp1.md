@@ -3,19 +3,20 @@
 ## Rappels de Classification
 ### Génération aritificielle de données
 
-`rand_bi_gauss` : produit un échantillon de réponse qui vaut 1 pour la première variable gausienne et -1 pour la deuxième.
+Dans le fichier `tp_knn_source.py`, nous avons à notre dispositions des fonctions qui vont nous permettre de générer des dataset différents. Par exemple : 
 
-`rand_tri_gauss`: même chose que la première avec trois variables et les classes sont 1,2 et 3.
+- `rand_tri_gauss`: produit un échantillon issue de trois vecteurs gaussien (de paramètres différents) appartenant à trois classes distinctes définies par les nombres 1,2 et 3. 
 
-`rand_clown`: va renvoyer des matrices du plan qui appartiennent à deux groupes
-$x_0$ est un vecteur normal centrée en 0
-$x_1$ va renvoyer une parabole à partir de $x_0$ (avec une erreur gaussienne)
-$x_2$ 
-`rand_checkers` : 
+- `rand_clown`: produit un échantillon de deux variables différentes : `x_1` est un vecteur aléatoire formant une parabole à une erreur gaussienne près(groupe du sourire du clown=1) et `x_2` est la réalisation d'un vecteur gaussien (groupe du nez du clown=-1).
 
-La dernière colonne correspond à la classe de la realisation $i$
+La dernière colonne correspond à la classe de la realisation $i$.
 
 ## La méthode
+
+### Approche intuitive 
+
+Faire la moyenne.
+
 
 ### Approche formelle
 

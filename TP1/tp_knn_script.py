@@ -13,7 +13,7 @@ from scipy import stats  # to use scipy.stats.mode
 from sklearn import neighbors
 from sklearn import datasets
 
-from tp_knn_source import (rand_gauss, rand_bi_gauss, rand_tri_gauss,
+from TP1.tp_knn_source import (rand_gauss, rand_bi_gauss, rand_tri_gauss,
                            rand_checkers, rand_clown, plot_2d, ErrorCurve,
                            frontiere, LOOCurve)
 
@@ -124,18 +124,18 @@ class KNNClassifier(BaseEstimator, ClassifierMixin):
     def predict(self, X):
         n_samples, n_features = X.shape
         # TODO: Compute all pairwise distances between X and self.X_ using e.g. metrics.pairwise.pairwise_distances
-        dist = np.sum((X[:,np.newaxis,:]-self.X[np.newaxis,:,:])**2, axis=-1)
+        dist = np.sum((X[:,np.newaxis,:]-self.X_[np.newaxis,:,:])**2, axis=-1)
         # Get indices to sort them
-        idx_sort =
+        idx_sort = np.argsort(dist, axis=1)
         # Get indices of neighbors
-        idx_neighbors =
+        idx_neighbors = idx_sort[:,:self.n_neighbors]
         # Get labels of neighbors
-        y_neighbors =
+        y_neighbors = self.y_[idx_neighbors]
         # Find the predicted labels y for each entry in X
         # You can use the scipy.stats.mode function
-        mode, _ =
-        # the following might be needed for dimensionaality
-        # y_pred = np.asarray(mode.ravel(), dtype=np.intp)
+        mode, _ = stats.mode(y_neighbors, axis=1)
+        # the following might be needed for dimensionality
+        y_pred = np.asarray(mode.ravel(), dtype=np.intp)
         return y_pred
 
 # TODO : compare your implementation with scikit-learn
@@ -146,8 +146,20 @@ Y_train = y2[::2].astype(int)
 X_test = X2[1::2]
 Y_test = y2[1::2].astype(int)
 
-# TODO: use KNeighborsClassifier vs. KNNClassifier
+#%% TODO: use KNeighborsClassifier vs. KNNClassifier
+# KNNClassifier
+model = KNNClassifier(n_neighbors=10)
+model.fit(X_train, Y_train)
+Y_pred = model.predict(X_test)
+acc_model = metrics.accuracy_score(Y_test, Y_pred)
 
+# KneighborsClassifier
+knn = neighbors.KNeighborsClassifier(n_neighbors=10)
+knn.fit(X_train, Y_train)
+Y_pred2 = knn.predict(X_test)
+acc_knn = metrics.accuracy_score(Y_test, Y_pred2)
+
+print("Accuracy KNN : ", acc_knn, " et  Accuracy model : ", acc_model)
 #%%
 # Q3 : test now all datasets
 # From now on use the Scikit-Learn implementation
@@ -178,6 +190,8 @@ ax.get_xaxis().set_ticks([])
 
 for n_neighbors in range(1, 11):
     # TODO : fit the knn
+    knn = neighbors.KNeighborsClassifier(n_neighbors=n_neighbors)
+    knn.fit(X_train, Y_train)
     plt.subplot(3, 5, 5 + n_neighbors)
     plt.xlabel('KNN with k=%d' % n_neighbors)
 
@@ -190,24 +204,34 @@ plt.draw()  # update plot
 plt.tight_layout()
 
 
+
 #%%
 # Q5 : Scores on train data
+knn = neighbors.KNeighborsClassifier(n_neighbors=1)
+knn.fit(X_train, Y_train)
+Y_app = knn.predict(X_train)
+print(metrics.accuracy_score(Y_train, Y_app))
 
-# TODO
+Y_pred = knn.predict(X_test)
+print(metrics.accuracy_score(Y_test, Y_pred))
 
 #%%
 # Q6 : Scores on left out data
 
-n1 = n2 = 200
+n1 = n2 = 250
 sigma = 0.1
-data4 = rand_checkers(2 * n1, 2 * n2, sigma)
+data4, rep4 = rand_checkers(2 * n1, 2 * n2, sigma)
 
-X_train = X4[::2]
-Y_train = y4[::2].astype(int)
-X_test = X4[1::2]
-Y_test = y4[1::2].astype(int)
+X_train = data4[::2]
+Y_train = rep4[::2].astype(int)
+X_test = data4[1::2]
+Y_test = rep4[1::2].astype(int)
 
-# TODO
+error = ErrorCurve(k_range=list(range(1,100)))
+
+error.fit_curve(X_train, Y_train, X_test, Y_test)
+print(np.argmin(error.errors))
+error.plot()
 
 #%%
 ############################################################################
@@ -254,21 +278,24 @@ plt.figure()
 plt.hist(Y_digits_test, density=True)
 plt.title("Labels frequency on the test dataset")
 
+score = np.zeros(50)
+for k in range(1,51):
+    knn = neighbors.KNeighborsClassifier(n_neighbors= k)
+    knn.fit(X_digits_train, Y_digits_train)
 
-knn = neighbors.KNeighborsClassifier(n_neighbors=30)
-knn.fit(X_digits_train, Y_digits_train)
-
-score = knn.score(X_digits_test, Y_digits_test)
-Y_digits_pred = knn.predict(X_digits_test)
-print('Score : %s' % score)
-
+    score[k-1] = knn.score(X_digits_test, Y_digits_test)
+    Y_digits_pred = knn.predict(X_digits_test)
+plt.figure()
+plt.plot(score)                                                              
 
 #%%
 # Q9 : Compute confusion matrix: use sklearn.metrics.confusion_matrix
-
-Y_pred = knn.predict(X_test)
+knn = neighbors.KNeighborsClassifier(n_neighbors=3)
+knn.fit(X_digits_train, Y_digits_train)
+Y_digits_pred = knn.predict(X_digits_test)
 
 # TODO : compute and show confusion matrix
+metrics.confusion_matrix(Y_digits_test, Y_digits_pred)
 
 #%%
 # Q10 : Estimate k with cross-validation for instance
@@ -277,4 +304,7 @@ Y_pred = knn.predict(X_test)
 plt.figure()
 loo_curv = LOOCurve(k_range=list(range(1, 50, 5)))
 
-# TODO
+loo_curv.fit_curve(digits.data, digits.target)
+loo_curv.plot()
+
+# %%
