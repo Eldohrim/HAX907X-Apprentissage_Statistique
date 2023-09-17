@@ -13,7 +13,7 @@ from scipy import stats  # to use scipy.stats.mode
 from sklearn import neighbors
 from sklearn import datasets
 
-from TP1.tp_knn_source import (rand_gauss, rand_bi_gauss, rand_tri_gauss,
+from tp_knn_source import (rand_gauss, rand_bi_gauss, rand_tri_gauss,
                            rand_checkers, rand_clown, plot_2d, ErrorCurve,
                            frontiere, LOOCurve)
 
@@ -87,21 +87,22 @@ plt.close("all")
 plt.ion()
 plt.figure(figsize=(15, 5))
 plt.subplot(141)
-plt.title('First data set')
+plt.title('Bi-gauss data set')
 plot_2d(X1, y1)
 
 plt.subplot(142)
-plt.title('Second data set')
+plt.title('Tri-gauss data set')
 plot_2d(X2, y2)
 
 plt.subplot(143)
-plt.title('Third data set')
+plt.title('Clown data set')
 plot_2d(X3, y3)
 
 plt.subplot(144)
-plt.title('Fourth data set')
+plt.title('Checkers data set')
 plot_2d(X4, y4)
 
+plt.savefig("./plot/visu_data.png")
 #%%
 ############################################################################
 #     K-NN
