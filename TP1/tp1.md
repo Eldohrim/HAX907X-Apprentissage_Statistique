@@ -24,7 +24,7 @@ On peut essayer d'adapter la métthode dans un cadre de régression. Lorsque $\m
 
 Tout d'abord nous allons compléter la classe `KNNClassifier` et comparer ses performances avec la classe `KNeighborsClassifier` de `scikit-learn`. Voici l'implémentation : 
 
-```{python}
+```python
 class KNNClassifier(BaseEstimator, ClassifierMixin):
     """Home made KNN Classifier class."""
 
@@ -56,10 +56,11 @@ class KNNClassifier(BaseEstimator, ClassifierMixin):
 
 Les performances des deux méthodes sont données dans le tableau ci-dessous : 
 
+<center>
 | Classe  | KNNClassifier          | KNeighborsClassifier |
 | :------------|:-------------:| :-------------:|
 | Performance  |   0.813        |    0.813 |
-
+</center>
 
 
 Rajouter une dimension 
