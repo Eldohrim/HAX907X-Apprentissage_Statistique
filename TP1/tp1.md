@@ -112,5 +112,8 @@ La grande question est maintenant de savoir quel $k$ choisir. Pour cela, nous al
 
 ![](./plot/visu_loo.png "Visualisation de l'erreur via LOO")
 
+<p align="center">
+  <img src="./plot/visu_loo.png" width="100" title="Visualisation de l'erreur via LOO">
+</p>
 
-
+On voit ici qu'il n'est pas nécessaire de regarder plus qu'un seul voisin, ce qui peut s'expliquer par la grande dimension du vecteur des données (vu qu'il s'agit d'images).
