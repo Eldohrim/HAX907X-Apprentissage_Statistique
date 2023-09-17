@@ -56,11 +56,11 @@ class KNNClassifier(BaseEstimator, ClassifierMixin):
 
 Les performances des deux méthodes sont données dans le tableau ci-dessous : 
 
-<center>
+<div align="center">
 | Classe  | KNNClassifier          | KNeighborsClassifier |
 | :------------|:-------------:| :-------------:|
 | Performance  |   0.813        |    0.813 |
-</center>
+</div>
 
 
 Rajouter une dimension 
