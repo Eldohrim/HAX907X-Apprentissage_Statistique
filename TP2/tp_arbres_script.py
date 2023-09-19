@@ -103,16 +103,16 @@ plot_2d(data4[:, :2], data4[:, 2], w=None)
 # classification comme l'indice de gini ou l'entropie, avec la
 # fonction 'DecisionTreeClassifier' du module 'tree'.
 
-# dt_entropy = TODO
-# dt_gini = TODO
+dt_entropy = tree.DecisionTreeClassifier(criterion='entropy')
+dt_gini = tree.DecisionTreeClassifier(criterion='gini')
 
 # Effectuer la classification d'un jeu de données simulées avec rand_checkers des échantillons de
 # taille n = 456 (attention à bien équilibrer les classes)
 
-# data = TODO
+data = rand_checkers(n1=114, n2=114, n3=114, n4=114)
 n_samples = len(data)
-# X = TODO
-# Y = TODO and careful with the type (cast to int)
+X = data[:,:2]
+Y = np.asarray(data[:,-1], dtype=int) # and careful with the type (cast to int)
 
 dt_gini.fit(X, Y)
 dt_entropy.fit(X, Y)
@@ -134,21 +134,23 @@ scores_gini = np.zeros(dmax)
 
 plt.figure(figsize=(15, 10))
 for i in range(dmax):
-    # dt_entropy = ... TODO
-    # ...
-    # scores_entropy[i] = dt_entropy.score(X, Y)
+    dt_entropy = tree.DecisionTreeClassifier(criterion='entropy', 
+                                             max_depth=i+1)
+    dt_entropy.fit(X,Y)
+    scores_entropy[i] = dt_entropy.score(X, Y)
 
-    # dt_gini = ... TODO
-    # ...
-    # scores_gini[i] = TODO
+    dt_gini = tree.DecisionTreeClassifier(criterion='gini', 
+                                          max_depth=i+1)
+    dt_gini.fit(X,Y)
+    scores_gini[i] = dt_gini.score(X,Y)
 
     plt.subplot(3, 4, i + 1)
     frontiere(lambda x: dt_gini.predict(x.reshape((1, -1))), X, Y, step=50, samples=False)
 plt.draw()
 
-
 plt.figure()
-# plt.plot(...)  # TODO
+plt.plot(scores_entropy, label="entropy")
+plt.plot(scores_gini, label="gini")
 plt.xlabel('Max depth')
 plt.ylabel('Accuracy Score')
 plt.draw()
@@ -159,7 +161,7 @@ print("Scores with Gini criterion: ", scores_gini)
 # Q3 Afficher la classification obtenue en utilisant la profondeur qui minimise le pourcentage d’erreurs
 # obtenues avec l’entropie
 
-# dt_entropy.max_depth = ... TODO
+dt_entropy.max_depth = 12
 
 plt.figure()
 frontiere(lambda x: dt_entropy.predict(x.reshape((1, -1))), X, Y, step=100)
@@ -171,7 +173,7 @@ print("Best scores with entropy criterion: ", dt_entropy.score(X, Y))
 # Q4.  Exporter la représentation graphique de l'arbre: Need graphviz installed
 # Voir https://scikit-learn.org/stable/modules/tree.html#classification
 
-# TODO
+tree.export_graphviz(dt_entropy)
 
 #%%
 # Q5 :  Génération d'une base de test
