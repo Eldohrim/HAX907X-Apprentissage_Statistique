@@ -3,11 +3,11 @@
 ## Rappels de Classification
 ### Génération aritificielle de données
 
-Dans le fichier `tp_knn_source.py`, nous avons à notre dispositions des fonctions qui vont nous permettre de générer des dataset différents. Par exemple : 
+Dans le fichier `tp_knn_source.py`, nous avons à notre disposition des fonctions qui vont nous permettre de générer des datasets différents. Par exemple : 
 
-- `rand_tri_gauss`: produit un échantillon issue de trois vecteurs gaussien (de paramètres différents) appartenant à trois classes distinctes définies par les nombres 1,2 et 3. 
+- `rand_tri_gauss`: produit un échantillon issu de trois vecteurs gaussiens (de paramètres différents) appartenant à trois classes distinctes définies par les nombres 1,2 et 3. 
 
-- `rand_clown`: produit un échantillon de deux variables différentes : `x_1` est un vecteur aléatoire formant une parabole à une erreur gaussienne près(groupe du sourire du clown=1) et `x_2` est la réalisation d'un vecteur gaussien (groupe du nez du clown=-1).
+- `rand_clown`: produit un échantillon de deux variables différentes : `x_1` est un vecteur aléatoire formant une parabole à une erreur gaussienne près (groupe du sourire du clown=1) et `x_2` est la réalisation d'un vecteur gaussien (groupe du nez du clown=-1).
 
 La dernière colonne correspond à la classe de la realisation $i$.
 Pour mieux visualiser, voici un graphique tracé avec la fonction `plot2d` de `tp_knn_source.py` : 
@@ -20,11 +20,11 @@ Pour mieux visualiser, voici un graphique tracé avec la fonction `plot2d` de `t
 
 ### Approche intuitive 
 
-On peut essayer d'adapter la métthode dans un cadre de régression. Lorsque $\mathcal{Y}=\mathbb{R}$, on peut procéder de la même manière en sélectionnant les individus les plus proches de $x$, mais au lieu de compter la classe ayant le plus d'occurrence (ce qui n'a pas de sens ici), nous allons plutôt donné à l'élément $x$ la valeur correspondant à la moyenne de ses voisins.
+On peut essayer d'adapter la méthode dans un cadre de régression. Lorsque $\mathcal{Y}=\mathbb{R}$, on peut procéder de la même manière en sélectionnant les individus les plus proches de $x$, mais au lieu de compter la classe ayant le plus d'occurrence (ce qui n'a pas de sens ici), nous allons plutôt donner à l'élément $x$ la valeur correspondant à la moyenne de ses voisins.
 
 ### Approche formelle
 
-Tout d'abord nous allons compléter la classe `KNNClassifier` et comparer ses performances avec la classe `KNeighborsClassifier` de `scikit-learn`. Voici l'implémentation : 
+Tout d'abord, nous allons compléter la classe `KNNClassifier` et comparer ses performances avec la classe `KNeighborsClassifier` de `scikit-learn`. Voici l'implémentation : 
 
 ```python
 class KNNClassifier(BaseEstimator, ClassifierMixin):
@@ -63,25 +63,29 @@ Les performances des deux méthodes sont données dans le tableau ci-dessous à 
 | Performance  |   0.813        |    0.813 |
 
 
-On voit ici que les performances sont assez similaires, mais à partir de maintenant nous allons utiliser la classe de `scikit-learn` pour gagner en temps de calcul.
+On voit ici que les performances sont assez similaires, mais à partir de maintenant nous utiliserons la classe de `scikit-learn` pour gagner en temps de calcul.
 
 Voici, dans le cas de `rand_checkers`, ce que donne l'algorithme pour `n_neighbors=5` : 
 
+<p align="center">
+  <img src="./plot/visu_classcheck.png" width="500" title="Méthode des 5 plus proches voisins appliquée à rand_checkers">
+</p>
 
-
-Nous avons calculer ce que donne la méthode pour différentes valeurs du nombre de voisin. On obtient les régions suivantes : 
+Nous avons calculé ce que donne la méthode pour différentes valeurs du nombre de voisin. On obtient les régions suivantes : 
 
 <p align="center">
   <img src="./plot/visu_diffk.png" width="500" title="Changement du nombre de voisin pour rand_tri_gauss">
 </p>
 
-On peut s'intéresser aux cas extrême où :
+On peut s'intéresser aux cas extrêmes où :
 - $k=1$ : il suffit de regarder la classe de l'individu le plus proche.
 - $k=n$ : tous les individus possèdent la classe qui apparait le plus souvent dans nos données d'apprentissage.
 
 Les voici tracés :
 
-
+<p align="center">
+  <img src="./plot/visu_extrem.png" width="500" title="KNN dans le cas extrême">
+</p>
 
 On peut remarquer par ailleurs en regardant l'image pour différentes valeurs du nombre de voisin que plus celui-ci diminue, plus la frontière entre les classes devient complexe : on gagne en biais ce que l'on va perdre en variance. Il nous faut donc trouver un compromis pour trouver le nombre de voisin optimal.
 
@@ -91,7 +95,7 @@ Pour ce faire, nous allons utiliser la classe `ErrorCurve` fournie dans `tp_knn_
   <img src="./plot/visu_error.png" width="500" title="Visualisation de l'erreur">
 </p>
 
-Ici, on voit que le nombre de voisin optimal est de $13$. En réiterant ce procéder pour d'autres valeurs de la taille de l'échantillon et d'autres datasets, on remarque que la valeur de ce $k$ optimal change.
+Ici, on voit que le nombre de voisin optimal est de $13$. En réiterant ce procédé pour d'autres valeurs de la taille de l'échantillon et d'autres datasets, on remarque que la valeur de ce $k$ optimal change.
 
 Cette méthode est très intuitive, géométriquement. Cependant, on peut rapidement se perdre surtout au niveau de l'interprétation, lorsque la dimension de nos vecteurs est supérieure à 4. De plus, on peut voir aussi que nous avons $n$ calcul de distance à faire lorsque $n$ est la taille de l'échantillon, ce qui peut prendre un temps considérable lorsque ce dernier est grand (en plus de l'agrégation à la classe). 
 

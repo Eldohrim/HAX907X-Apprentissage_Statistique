@@ -206,6 +206,27 @@ plt.draw()  # update plot
 plt.tight_layout()
 plt.savefig("./plot/visu_diffk.png")
 
+#%%
+plt.figure(figsize=(12, 8))
+plt.title('KNN with extrem values of k')
+ax = plt.gca()
+ax.get_yaxis().set_ticks([])
+ax.get_xaxis().set_ticks([])
+j=1
+for n_neighbors in [1,len(X_train)]:
+    knn = neighbors.KNeighborsClassifier(n_neighbors=n_neighbors)
+    knn.fit(X_train, Y_train)
+    plt.subplot(1, 2,j)
+    plt.xlabel('KNN with k=%d' % n_neighbors)
+
+    n_labels = np.unique(y).shape[0]
+    frontiere(knn, X, y, w=None, step=50, alpha_choice=1,
+              n_labels=n_labels, colorbar=False, samples=False,
+              n_neighbors=n_neighbors)
+    j+=1
+
+plt.draw()  # update plot
+plt.tight_layout()
 
 #%%
 # Q5 : Scores on train data
