@@ -151,6 +151,7 @@ plt.draw()
 plt.figure()
 plt.plot(scores_entropy, label="entropy")
 plt.plot(scores_gini, label="gini")
+plt.legend()
 plt.xlabel('Max depth')
 plt.ylabel('Accuracy Score')
 plt.draw()
@@ -172,14 +173,17 @@ print("Best scores with entropy criterion: ", dt_entropy.score(X, Y))
 #%%
 # Q4.  Exporter la représentation graphique de l'arbre: Need graphviz installed
 # Voir https://scikit-learn.org/stable/modules/tree.html#classification
+import graphviz
 
-tree.export_graphviz(dt_entropy)
+data = tree.export_graphviz(dt_entropy)
+graph = graphviz.Source(data)
+graph.render('dt_entropy', format='pdf')
 
 #%%
 # Q5 :  Génération d'une base de test
-# data_test = rand_checkers(... TODO
-# X_test = ...
-# Y_test = ...
+data_test = rand_checkers(n1=40, n2=40, n3=40, n4=40)
+X_test = data_test[:,:2]
+Y_test = np.asarray(data_test[:,-1], dtype=int)
 
 dmax = 12
 scores_entropy = np.zeros(dmax)
@@ -187,11 +191,22 @@ scores_gini = np.zeros(dmax)
 plt.figure(figsize=(15, 10))
 
 for i in range(dmax):
-    # TODO
+    dt_entropy = tree.DecisionTreeClassifier(criterion='entropy', 
+                                             max_depth=i+1)
+    dt_entropy.fit(X,Y)
+    scores_entropy[i] = dt_entropy.score(X_test, Y_test)
+
+    dt_gini = tree.DecisionTreeClassifier(criterion='gini', 
+                                          max_depth=i+1)
+    dt_gini.fit(X,Y)
+    scores_gini[i] = dt_gini.score(X_test,Y_test)
+
 
 #%%
-plt.figure()
-# plt.plot(...)  # TODO
+plt.figure(figsize=(10,8))
+plt.plot(scores_entropy)
+plt.plot(scores_gini)
+plt.legend(['entropy', 'gini'])
 plt.xlabel('Max depth')
 plt.ylabel('Accuracy Score')
 plt.title("Testing error")
@@ -205,16 +220,98 @@ digits = datasets.load_digits()
 
 n_samples = len(digits.data)
 # use test_train_split rather.
+digits.images.reshape((n_samples, -1))
+X_test = digits.data[:n_samples*4 // 5]  # digits.images.reshape((n_samples, -1))
+Y_test = digits.target[:n_samples*4 // 5]
+X_train = digits.data[n_samples*4 // 5:]
+Y_train = digits.target[n_samples*4 // 5:]
 
-# X = digits.data[:n_samples // 2]  # digits.images.reshape((n_samples, -1))
-# Y = digits.target[:n_samples // 2]
-# X_test = digits.data[n_samples // 2:]
-# Y_test = digits.target[n_samples // 2:]
+dmax = 12
+scores_entropy = np.zeros(dmax)
+scores_gini = np.zeros(dmax)
 
-# TODO
+for i in range(dmax):
+    dt_entropy = tree.DecisionTreeClassifier(criterion='entropy', 
+                                             max_depth=i+1)
+    dt_entropy.fit(X_train,Y_train)
+    scores_entropy[i] = dt_entropy.score(X_train, Y_train)
 
+    dt_gini = tree.DecisionTreeClassifier(criterion='gini', 
+                                          max_depth=i+1)
+    dt_gini.fit(X_train,Y_train)
+    scores_gini[i] = dt_gini.score(X_train,Y_train)
+
+
+plt.figure()
+plt.plot(scores_entropy, label="entropy")
+plt.plot(scores_gini, label="gini")
+plt.legend()
+plt.xlabel('Max depth')
+plt.ylabel('Accuracy Score')
+plt.draw()
+print("Scores with entropy criterion: ", scores_entropy)
+print("Scores with Gini criterion: ", scores_gini)
+
+
+#%%
+dmax = 15
+scores_entropy = np.zeros(dmax)
+scores_gini = np.zeros(dmax)
+
+for i in range(dmax):
+    dt_entropy = tree.DecisionTreeClassifier(criterion='entropy', 
+                                             max_depth=i+1)
+    dt_entropy.fit(X_train,Y_train)
+    scores_entropy[i] = dt_entropy.score(X_test, Y_test)
+
+    dt_gini = tree.DecisionTreeClassifier(criterion='gini', 
+                                          max_depth=i+1)
+    dt_gini.fit(X_train,Y_train)
+    scores_gini[i] = dt_gini.score(X_test,Y_test)
+
+
+plt.figure()
+plt.plot(scores_entropy, label="entropy")
+plt.plot(scores_gini, label="gini")
+plt.legend()
+plt.xlabel('Max depth')
+plt.ylabel('Accuracy Score')
+plt.draw()
+print("Scores with entropy criterion: ", scores_entropy)
+print("Scores with Gini criterion: ", scores_gini)
+
+
+
+#%%
 # Q7. estimer la meilleur profondeur avec un cross_val_score
+from sklearn.model_selection import cross_val_score
+X = digits.data
+Y = digits.target
+error = np.zeros(dmax)
 
-# TODO
+for i in range(dmax):
+    dt_entropy = tree.DecisionTreeClassifier(criterion='entropy', max_depth=i+1)
+    error[i] = np.mean(1-cross_val_score(dt_entropy, X, Y, cv=5))
+
+plt.plot(error)
+best_depth = np.argmin(error)+1
+print("Best depth: ", best_depth)
 
 
+#%%
+from sklearn.model_selection import learning_curve
+
+dt = tree.DecisionTreeClassifier(criterion='entropy', max_depth=best_depth)
+n_samples, train_curve, test_curve = learning_curve(dt, X, Y)
+plt.figure()
+plt.grid()
+plt.fill_between(n_samples, np.mean(train_curve, axis=1) -1.96*np.std(train_curve, axis=1),
+                  np.mean(train_curve, axis=1) + 1.96*np.std(train_curve, axis=1), alpha=0.1)
+plt.fill_between(n_samples, np.mean(test_curve, axis=1) -1.96*np.std(test_curve, axis=1),
+                  np.mean(test_curve, axis=1) + 1.96*np.std(test_curve, axis=1), alpha=0.1)
+plt.plot(n_samples, np.mean(train_curve, axis=1),"o-", label="train")
+plt.plot(n_samples, np.mean(test_curve, axis=1), "o-", label="test")
+plt.legend(loc="lower right")
+plt.xlabel("Size of sample in the training set")
+plt.ylabel("Accuracy")
+plt.title("Learning curve for best decision tree")
