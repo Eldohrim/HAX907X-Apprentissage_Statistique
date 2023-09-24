@@ -1,0 +1,103 @@
+---
+title: "TP2 - Arbres"
+format:
+  pdf:
+    documentclass: scrartcl
+    papersize: letter
+    author: Alexandre CAPEL
+    date: 2023/09/28
+    number-sections: true
+    colorlinks: true
+    abstract: Le sujet de ce TP porte sur l'étude des arbres de décisions (ou decision tree). Nous allons apprendre à générer nos premiers arbres à partir de données simulées et enregistrées (du package `scikit-learn`) et à faire de la sélection de modèle. 
+---
+
+**Génération aritficielle de données**
+
+Durant ce TP, nous utiliserons des fonctions pour simuler ou afficher des graphiques. Ces derniers ont été empruntés au fichier `tp_arbres_source.py`.
+
+## Classification avec les arbres
+
+### Aparté dans le monde de la régression 
+Toutes les informations concernant la formalisation du problème et sa méthode de résolution (avec l'algorithme CART notamment), sont présenté dans l'énoncé du TP. Cependant, ce dernier nous donne une solution dans le cas de la classification.
+
+En effet, on pourrait se demander quelle mesure d'homogénéité peut être utilisée dans un cadre de régression. Dans le cas de variables continues, un bon indicateur de l'hétérogénéité d'une groupe d'individu serait de calculer leur variance : en effet, cette dernière mesure le fameux "écart à la moyenne" et sera d'autant plus petite que les individus ont des valeurs proches pour cette variables. 
+
+A partir de maintenant, on se place dans le paradigme de la classification. 
+
+### Premières simulations
+
+Avec `scikit-learn`, on peut construire des arbres de décisions grâce au package `tree`. On obtient le classifieur souhaité avec la classe `tree.DecisionTreeClassifier`.
+
+```python
+from sklearn import tree
+```
+
+Faisons nos premières simulations : nous allons utiliser la fonction `rand_checkers` pour construire un échantillon (équilibré) de taille $n=456$. On peut construire nos arbres selon les deux critères présentés (entropie et indice de Gini) à l'aide du code suivant : 
+
+```{python}
+from tp_arbres_source import rand_checkers
+import numpy as np
+from sklearn import tree
+
+# Construction des classifieur
+dt_entropy = tree.DecisionTreeClassifier(criterion='entropy')
+dt_gini = tree.DecisionTreeClassifier(criterion='gini')
+
+data = rand_checkers(n1=114, n2=114, n3=114, n4=114)
+n_samples = len(data)
+X = data[:,:2]
+Y = np.asarray(data[:,-1], dtype=int)
+dt_gini.fit(X, Y)
+dt_entropy.fit(X, Y)
+
+print("Gini criterion")
+print(dt_gini.get_params())
+print(dt_gini.score(X, Y))
+
+print("Entropy criterion")
+print(dt_entropy.get_params())
+print(dt_entropy.score(X, Y))
+```
+
+Cette classe a donc pleins d'attributs qui nous permettent d'avoir des information sur notre classifieur : ses paramètres avec `get_params()` ou sa fiabilité avec la fonction `score`. 
+
+Amusons nous à changer la profondeur maximale de l'arbre (paramètre `max_depth`), et traçon la courbe d'erreur en fonction de cette dernière. On obtient alors le graphique suivant : 
+
+```{python}
+#| echo: false
+from tp_arbres_source import frontiere
+import matplotlib.pyplot as plt
+dmax = 12
+scores_entropy = np.zeros(dmax)
+scores_gini = np.zeros(dmax)
+
+plt.figure(figsize=(15, 10))
+for i in range(dmax):
+    dt_entropy = tree.DecisionTreeClassifier(criterion='entropy', 
+                                             max_depth=i+1)
+    dt_entropy.fit(X,Y)
+    scores_entropy[i] = dt_entropy.score(X, Y)
+
+    dt_gini = tree.DecisionTreeClassifier(criterion='gini', 
+                                          max_depth=i+1)
+    dt_gini.fit(X,Y)
+    scores_gini[i] = dt_gini.score(X,Y)
+
+    plt.subplot(3, 4, i + 1)
+    frontiere(lambda x: dt_gini.predict(x.reshape((1, -1))), X, Y, step=50, samples=False)
+plt.draw()
+
+plt.figure()
+plt.plot(scores_entropy, label="entropy")
+plt.plot(scores_gini, label="gini")
+plt.legend()
+plt.xlabel('Max depth')
+plt.ylabel('Accuracy Score')
+plt.draw()
+print("Scores with entropy criterion: ", scores_entropy)
+print("Scores with Gini criterion: ", scores_gini)
+```
+
+
+
+## Méthode de choix de paramètres - Sélection de modèle
