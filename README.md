@@ -20,7 +20,7 @@ $ quarto render tp2.qmd
 
 ### TP1 - k plus proches voisins
 
-Le sujet de ce TP porte sur l'étude et l'implémentation d'un algorithme basique de classification : les $k$ plus proches voisins (ou $k$ nearest neighbors). Nous en profiterons pour construire nos premières simulations et prendr een main le package `scikit-learn`).
+Le sujet de ce TP porte sur l'étude et l'implémentation d'un algorithme basique de classification : les $k$ plus proches voisins (ou $k$ nearest neighbors). Nous en profiterons pour construire nos premières simulations et pour prendre en main le package `scikit-learn`).
 
 Le compte rendu est en format `.md`.
 
