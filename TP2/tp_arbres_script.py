@@ -103,17 +103,18 @@ plot_2d(data4[:, :2], data4[:, 2], w=None)
 # classification comme l'indice de gini ou l'entropie, avec la
 # fonction 'DecisionTreeClassifier' du module 'tree'.
 
+# Construction des classifieur
 dt_entropy = tree.DecisionTreeClassifier(criterion='entropy')
 dt_gini = tree.DecisionTreeClassifier(criterion='gini')
 
-# Effectuer la classification d'un jeu de données simulées avec rand_checkers des échantillons de
-# taille n = 456 (attention à bien équilibrer les classes)
-
-data = rand_checkers(n1=114, n2=114, n3=114, n4=114)
+# Simulation de l'échantillon
+n = 456
+data = rand_checkers(n1=n//4, n2=n//4, n3=n//4, n4=n//4)
 n_samples = len(data)
 X = data[:,:2]
-Y = np.asarray(data[:,-1], dtype=int) # and careful with the type (cast to int)
+Y = np.asarray(data[:,-1], dtype=int)
 
+# Entraînement des deux modèles
 dt_gini.fit(X, Y)
 dt_entropy.fit(X, Y)
 
@@ -127,23 +128,27 @@ print(dt_entropy.score(X, Y))
 
 #%%
 # Afficher les scores en fonction du paramètre max_depth
-
-dmax = 12
+# Initialisation 
+dmax = 12      # choix arbitraire   
 scores_entropy = np.zeros(dmax)
 scores_gini = np.zeros(dmax)
-
 plt.figure(figsize=(15, 10))
+
+# Boucle principale
 for i in range(dmax):
+    # Critère : entropie
     dt_entropy = tree.DecisionTreeClassifier(criterion='entropy', 
                                              max_depth=i+1)
     dt_entropy.fit(X,Y)
     scores_entropy[i] = dt_entropy.score(X, Y)
 
+    # Critère : indice de Gini
     dt_gini = tree.DecisionTreeClassifier(criterion='gini', 
                                           max_depth=i+1)
     dt_gini.fit(X,Y)
     scores_gini[i] = dt_gini.score(X,Y)
 
+    # Affichage progressif des frontières en fonction de la profondeur de l'arbre
     plt.subplot(3, 4, i + 1)
     frontiere(lambda x: dt_gini.predict(x.reshape((1, -1))), X, Y, step=50, samples=False)
 plt.draw()
@@ -155,6 +160,7 @@ plt.legend()
 plt.xlabel('Max depth')
 plt.ylabel('Accuracy Score')
 plt.draw()
+
 print("Scores with entropy criterion: ", scores_entropy)
 print("Scores with Gini criterion: ", scores_gini)
 
@@ -163,38 +169,10 @@ print("Scores with Gini criterion: ", scores_gini)
 # obtenues avec l’entropie
 
 dt_entropy.max_depth = np.argmin(1-scores_entropy)+1
-
-plt.figure()
+plt.figure(figsize=(6,3.2))
 frontiere(lambda x: dt_entropy.predict(x.reshape((1, -1))), X, Y, step=100)
-plt.title("Best frontier with entropy criterion")
 plt.draw()
 print("Best scores with entropy criterion: ", dt_entropy.score(X, Y))
-
-#%%
-import matplotlib.pyplot as plt
-from matplotlib.patches import Circle
-
-# Créer une figure et un axe
-fig, ax = plt.subplots()
-sigma=0.1
-# Créer un cercle
-
-for i in range(-2, 2):
-    for j in range(-2, 2):
-        circle = Circle((i, j), 1.96*sigma, alpha=0.2,facecolor='blue', edgecolor='blue')
-        ax.add_patch(circle)
-
-# Autres opérations de mise en forme, étiquettes, titres, etc.
-ax.set_xlim(-3, 2)
-ax.set_ylim(-3, 2)
-ax.set_aspect('equal')
-ax.grid()
-ax.set_xlabel('X')
-ax.set_ylabel('Y')
-ax.set_title('Tracé de cercles')
-
-# Afficher le graphique
-plt.show()
 
 #%%
 # Q4.  Exporter la représentation graphique de l'arbre: Need graphviz installed
@@ -216,133 +194,165 @@ graph_lt.render('./graphviz/example', format='pdf')
 
 #%%
 # Q5 :  Génération d'une base de test
+
+# Initialisation de l'échantillon de test
 data_test = rand_checkers(n1=40, n2=40, n3=40, n4=40)
 X_test = data_test[:,:2]
 Y_test = np.asarray(data_test[:,-1], dtype=int)
 
-dmax = 12
+# Initialisation
+dmax = 30                             # choisi arbitrairement
 scores_entropy = np.zeros(dmax)
 scores_gini = np.zeros(dmax)
-plt.figure(figsize=(15, 10))
 
+# Boucle principale
 for i in range(dmax):
+    # Critère : entropie
     dt_entropy = tree.DecisionTreeClassifier(criterion='entropy', 
                                              max_depth=i+1)
     dt_entropy.fit(X,Y)
     scores_entropy[i] = dt_entropy.score(X_test, Y_test)
 
+    # Critère : indice de Gini
     dt_gini = tree.DecisionTreeClassifier(criterion='gini', 
                                           max_depth=i+1)
     dt_gini.fit(X,Y)
     scores_gini[i] = dt_gini.score(X_test,Y_test)
 
-
-#%%
-plt.figure(figsize=(10,8))
-plt.plot(scores_entropy)
-plt.plot(scores_gini)
+# Affichage des courbes
+plt.figure(figsize=(6,3.2))
+plt.plot(1-scores_entropy)
+plt.plot(1-scores_gini)
 plt.legend(['entropy', 'gini'])
 plt.xlabel('Max depth')
 plt.ylabel('Accuracy Score')
 plt.title("Testing error")
+
 print(scores_entropy)
 
 #%%
 # Q6. même question avec les données de reconnaissances de texte 'digits'
-
-# Import the digits dataset
-digits = datasets.load_digits()
-
 from sklearn import model_selection
+
+# Importation et construction des échantillons test/train
+digits = datasets.load_digits()
 n_samples = len(digits.data)
-# use test_train_split rather.
 X_train, X_test, Y_train, Y_test = model_selection.train_test_split(digits.data,
                                                                     digits.target, 
                                                                     test_size=0.8)
 
-
-dmax = 12
+# Initialisation
+dmax = 15
 scores_entropy = np.zeros(dmax)
 scores_gini = np.zeros(dmax)
 
+# Boucle principale
 for i in range(dmax):
+    # Critère : entropie
     dt_entropy = tree.DecisionTreeClassifier(criterion='entropy', 
                                              max_depth=i+1)
     dt_entropy.fit(X_train,Y_train)
     scores_entropy[i] = dt_entropy.score(X_train, Y_train)
 
+    # Critère : indice de Gini
     dt_gini = tree.DecisionTreeClassifier(criterion='gini', 
                                           max_depth=i+1)
     dt_gini.fit(X_train,Y_train)
     scores_gini[i] = dt_gini.score(X_train,Y_train)
 
-
-plt.figure()
-plt.plot(scores_entropy, label="entropy")
-plt.plot(scores_gini, label="gini")
+# Affichage des courbes
+plt.figure(figsize=(6,3.2))
+plt.plot(1-scores_entropy, label="entropy")
+plt.plot(1-scores_gini, label="gini")
 plt.legend()
 plt.xlabel('Max depth')
 plt.ylabel('Accuracy Score')
 plt.draw()
+
 print("Scores with entropy criterion: ", scores_entropy)
 print("Scores with Gini criterion: ", scores_gini)
 
 
 #%%
+# Initialisation
 dmax = 15
 scores_entropy = np.zeros(dmax)
 scores_gini = np.zeros(dmax)
 
+# Boucle principale
 for i in range(dmax):
+    # Critère : entropie
     dt_entropy = tree.DecisionTreeClassifier(criterion='entropy', 
                                              max_depth=i+1)
     dt_entropy.fit(X_train,Y_train)
     scores_entropy[i] = dt_entropy.score(X_test, Y_test)
 
+    # Critère : indice de Gini
     dt_gini = tree.DecisionTreeClassifier(criterion='gini', 
                                           max_depth=i+1)
     dt_gini.fit(X_train,Y_train)
     scores_gini[i] = dt_gini.score(X_test,Y_test)
 
-
-plt.figure()
-plt.plot(scores_entropy, label="entropy")
-plt.plot(scores_gini, label="gini")
+# Affichage des courbes
+plt.figure(figsize=(6,3.2))
+plt.plot(1-scores_entropy, label="entropy")
+plt.plot(1-scores_gini, label="gini")
 plt.legend()
 plt.xlabel('Max depth')
 plt.ylabel('Accuracy Score')
 plt.draw()
+
 print("Scores with entropy criterion: ", scores_entropy)
 print("Scores with Gini criterion: ", scores_gini)
 
 #%%
 # Q7. estimer la meilleur profondeur avec un cross_val_score
-np.random.seed(123)
 from sklearn.model_selection import cross_val_score
+
+# Initialisation avec graine fixée
+np.random.seed(123)
+dmax = 30
 X = digits.data
 Y = digits.target
-dmax = 50
 error = np.zeros(dmax)
+
+# Boucle de calcul de l'erreur
 for i in range(dmax):
     dt_entropy = tree.DecisionTreeClassifier(criterion='entropy', max_depth=i+1)
     error[i] = np.mean(1-cross_val_score(dt_entropy, X, Y, cv=5))
 
+# Affichage de la courbe
+plt.figure(figsize=(6,3.2))
 plt.plot(error)
 best_depth = np.argmin(error)+1
 print("Best depth: ", best_depth)
 
+#%%
+# Exportation de meilleur arbre
+dt = tree.DecisionTreeClassifier(criterion='entropy', max_depth=8)
+dt.fit(X_train,Y_train)
+data_f = tree.export_graphviz(dt)
+graph_lt = graphviz.Source(data_f)
+graph_lt.render('./graphviz/final_tree', format='pdf')
 
 #%%
 from sklearn.model_selection import learning_curve
 
-dt = tree.DecisionTreeClassifier(criterion='entropy', max_depth=best_depth)
-n_samples, train_curve, test_curve = learning_curve(dt, X, Y)
-plt.figure()
+# Calcul des courbes d'apprentissage
+dt = tree.DecisionTreeClassifier(criterion='entropy', max_depth=8)
+n_samples, train_curve, test_curve = learning_curve(dt, X, Y,train_sizes=np.linspace(0.1, 1, 8))
+
+# Mise en place de l'affichage
+plt.figure(figsize=(6,3.2))
 plt.grid()
+
+# colorisation des intervalles de confiance
 plt.fill_between(n_samples, np.mean(train_curve, axis=1) -1.96*np.std(train_curve, axis=1),
                   np.mean(train_curve, axis=1) + 1.96*np.std(train_curve, axis=1), alpha=0.1)
 plt.fill_between(n_samples, np.mean(test_curve, axis=1) -1.96*np.std(test_curve, axis=1),
                   np.mean(test_curve, axis=1) + 1.96*np.std(test_curve, axis=1), alpha=0.1)
+
+# Affichage des courbes
 plt.plot(n_samples, np.mean(train_curve, axis=1),"o-", label="train")
 plt.plot(n_samples, np.mean(test_curve, axis=1), "o-", label="test")
 plt.legend(loc="lower right")
