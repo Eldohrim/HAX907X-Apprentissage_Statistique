@@ -1,4 +1,4 @@
-# TP1 : $k$-plus proches voisins
+# TP1 : k-plus proches voisins
 
 ## Rappels de Classification
 ### Génération aritificielle de données
