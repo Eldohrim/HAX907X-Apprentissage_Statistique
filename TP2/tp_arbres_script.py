@@ -149,8 +149,8 @@ for i in range(dmax):
 plt.draw()
 
 plt.figure()
-plt.plot(scores_entropy, label="entropy")
-plt.plot(scores_gini, label="gini")
+plt.plot(1-scores_entropy, label="entropy")
+plt.plot(1-scores_gini, label="gini")
 plt.legend()
 plt.xlabel('Max depth')
 plt.ylabel('Accuracy Score')
@@ -162,7 +162,7 @@ print("Scores with Gini criterion: ", scores_gini)
 # Q3 Afficher la classification obtenue en utilisant la profondeur qui minimise le pourcentage d’erreurs
 # obtenues avec l’entropie
 
-dt_entropy.max_depth = 12
+dt_entropy.max_depth = np.argmin(1-scores_entropy)+1
 
 plt.figure()
 frontiere(lambda x: dt_entropy.predict(x.reshape((1, -1))), X, Y, step=100)
@@ -171,13 +171,48 @@ plt.draw()
 print("Best scores with entropy criterion: ", dt_entropy.score(X, Y))
 
 #%%
+import matplotlib.pyplot as plt
+from matplotlib.patches import Circle
+
+# Créer une figure et un axe
+fig, ax = plt.subplots()
+sigma=0.1
+# Créer un cercle
+
+for i in range(-2, 2):
+    for j in range(-2, 2):
+        circle = Circle((i, j), 1.96*sigma, alpha=0.2,facecolor='blue', edgecolor='blue')
+        ax.add_patch(circle)
+
+# Autres opérations de mise en forme, étiquettes, titres, etc.
+ax.set_xlim(-3, 2)
+ax.set_ylim(-3, 2)
+ax.set_aspect('equal')
+ax.grid()
+ax.set_xlabel('X')
+ax.set_ylabel('Y')
+ax.set_title('Tracé de cercles')
+
+# Afficher le graphique
+plt.show()
+
+#%%
 # Q4.  Exporter la représentation graphique de l'arbre: Need graphviz installed
 # Voir https://scikit-learn.org/stable/modules/tree.html#classification
 import graphviz
-
+tree.plot_tree(dt_entropy)
 data = tree.export_graphviz(dt_entropy)
 graph = graphviz.Source(data)
-graph.render('dt_entropy', format='pdf')
+graph.render('./graphviz/dt_entropy', format='pdf')
+
+
+#%% Arbre plus petit
+
+little_t = tree.DecisionTreeClassifier(criterion='entropy', max_depth=2)
+little_t.fit(X,Y)
+data_little_t = tree.export_graphviz(little_t)
+graph_lt = graphviz.Source(data_little_t)
+graph_lt.render('./graphviz/example', format='pdf')
 
 #%%
 # Q5 :  Génération d'une base de test
@@ -218,13 +253,13 @@ print(scores_entropy)
 # Import the digits dataset
 digits = datasets.load_digits()
 
+from sklearn import model_selection
 n_samples = len(digits.data)
 # use test_train_split rather.
-digits.images.reshape((n_samples, -1))
-X_test = digits.data[:n_samples*4 // 5]  # digits.images.reshape((n_samples, -1))
-Y_test = digits.target[:n_samples*4 // 5]
-X_train = digits.data[n_samples*4 // 5:]
-Y_train = digits.target[n_samples*4 // 5:]
+X_train, X_test, Y_train, Y_test = model_selection.train_test_split(digits.data,
+                                                                    digits.target, 
+                                                                    test_size=0.8)
+
 
 dmax = 12
 scores_entropy = np.zeros(dmax)
@@ -280,15 +315,14 @@ plt.draw()
 print("Scores with entropy criterion: ", scores_entropy)
 print("Scores with Gini criterion: ", scores_gini)
 
-
-
 #%%
 # Q7. estimer la meilleur profondeur avec un cross_val_score
+np.random.seed(123)
 from sklearn.model_selection import cross_val_score
 X = digits.data
 Y = digits.target
+dmax = 50
 error = np.zeros(dmax)
-
 for i in range(dmax):
     dt_entropy = tree.DecisionTreeClassifier(criterion='entropy', max_depth=i+1)
     error[i] = np.mean(1-cross_val_score(dt_entropy, X, Y, cv=5))
