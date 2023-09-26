@@ -30,7 +30,7 @@ Le sujet de ce TP porte sur l'étude des arbres de décisions (ou decision tree)
 
 **Installation de graphviz requis**
 
-Il est nécessaire d'avoir bien télécharger correctement le package `graphviz` pour pouvoir enregistrer vos arbres. Une fois placer dans votre environnement python, exécutez la commande :
+Il est nécessaire d'avoir bien téléchargé correctement le package `graphviz` pour pouvoir enregistrer vos arbres. Une fois placé dans votre environnement python, exécutez la commande :
 
 ```bash
 $  conda install python-graphviz
