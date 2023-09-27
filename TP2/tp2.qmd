@@ -12,16 +12,16 @@ format:
     fig-align: center
 ---
 
-**Génération aritficielle de données**
+**Génération artificielle de données**
 
-Durant ce TP, nous utiliserons des fonctions pour simuler ou afficher des graphiques. Ces derniers ont été empruntés au fichier `tp_arbres_source.py`.
+Durant ce TP, nous utiliserons des fonctions pour simuler ou afficher des graphiques. Ces dernières ont été empruntées au fichier `tp_arbres_source.py`.
 
 # Classification avec les arbres
 
 ## Aparté dans le monde de la régression 
-Toutes les informations concernant la formalisation du problème et sa méthode de résolution (avec l'algorithme CART notamment), sont présenté dans l'énoncé du TP. Cependant, ce dernier nous donne une solution dans le cas de la classification.
+Toutes les informations concernant la formalisation du problème et sa méthode de résolution (avec l'algorithme CART notamment), sont présentées dans l'énoncé du TP. Cependant, ce dernier nous donne une solution dans le cas de la classification.
 
-En effet, on pourrait se demander quelle mesure d'homogénéité peut être utilisée dans un cadre de régression. Dans le cas de variables continues, un bon indicateur de l'hétérogénéité d'une groupe d'individu serait de calculer leur variance : en effet, cette dernière mesure le fameux "écart à la moyenne" et sera d'autant plus petite que les individus ont des valeurs proches pour cette variables. 
+En effet, on pourrait se demander quelle mesure d'homogénéité peut être utilisée dans un cadre de régression. Dans le cas de variables continues, un bon indicateur de l'hétérogénéité d'une groupe d'individu serait de calculer leur variance : en effet, cette dernière mesure le fameux "écart à la moyenne" et sera d'autant plus petite que les individus ont des valeurs proches pour cette variables. On pourra donc procéder de la même manière que CART, en décidant sur la coupe donnant la plus petite variance, et le groupe du noeud sera donné en faisant la moyenne des individu du sous ensemble obtenu.
 
 A partir de maintenant, on se place dans le paradigme de la classification. 
 
@@ -88,9 +88,9 @@ print("Entropy criterion")
 print(dt_entropy.score(X, Y))
 ```
 
-Cette classe a donc pleins d'attributs qui nous permettent d'avoir des information sur notre classifieur : ses paramètres avec `get_params()` ou sa fiabilité avec la fonction `score`. 
+Cette classe a donc pleins d'attributs qui nous permettent d'avoir des informations sur notre classifieur : ses paramètres avec `get_params()` ou sa fiabilité avec la fonction `score` par exemple. 
 
-Amusons nous à changer la profondeur maximale de l'arbre (paramètre `max_depth`), et traçon la courbe d'erreur en fonction de cette dernière. On obtient alors le graphique suivant : 
+Amusons nous à changer la profondeur maximale de l'arbre (paramètre `max_depth`), et traçons la courbe d'erreur en fonction de cette dernière. On obtient alors le graphique suivant : 
 
 ```{python}
 #| label: fig-first
@@ -121,14 +121,14 @@ plt.figure(figsize=(6,3.2))
 plt.plot(1-scores_entropy, label="entropy")
 plt.plot(1-scores_gini, label="gini")
 plt.legend()
-plt.xlabel('Profondeur maximale')
-plt.ylabel("% d'erreur")
+plt.xlabel('Profondeur maximale', fontsize=12)
+plt.ylabel("Taux d'erreur", fontsize=12)
 plt.draw()
 ```
 
-On constate ici que pour le pourcentage d'erreur est quasiment nul pour une profondeur maximale égale 10. On obtiendra donc une partition très fine pour des profondeur supérieure. Cependant, il faut faire attention : nous sommes en train de regarder un pourcentage d'erreur calculé à partir de nos données d'apprentissage ! Cela étant dit, il n'est pas licite d'utliser de telles valeurs pour étudier la fiabilité de notre classifieur. 
+On constate ici que pour le taux d'erreur est quasiment nul pour une profondeur maximale égale 10. On obtiendra donc une partition très fine pour les profondeur supérieure. Cependant, il faut faire attention : nous sommes en train de regarder un pourcentage d'erreur calculé à partir de nos données d'apprentissage ! Cela étant dit, il n'est pas licite d'utliser de telles valeurs pour étudier la fiabilité de notre classifieur. 
 
-En effet, étudions ce qu'il se passe dans le cas où l'on construit une parition de taille égale à la taille de notre échantillon. On obtiendra alors une parition dont chaque sous ensemble contient un seul individu. Impossible pour l'arbre de décision de se tromper... en ce qui concerne les données d'apprentissages ! Néanmoins, un tel classifieur ne sera pas adapté à la prédiction puisqu'il sera trop lié aux données avec lequel il a appris : on est dans un cadre typique de sur-apprentissage.
+En effet, étudions ce qu'il se passe dans le cas où l'on construit une parition de taille égale à la taille de notre échantillon. On obtiendra alors une parition dont chaque sous ensemble contient un seul individu. Impossible pour l'arbre de décision de se tromper... en ce qui concerne les données d'apprentissages ! Cependant, un tel classifieur ne sera pas adapté à la prédiction puisqu'il sera trop lié aux données avec lequel il a appris : on est dans un cadre typique de sur-apprentissage.
 
 L'objectif va donc être de trouver une profondeur idéale pour ne pas sur-apprendre, tout en étant assez grande pour ne pas avoir un biais trop important (cas de sous-apprentissage).
 
@@ -166,10 +166,10 @@ Regardons un modèle plus lisible (avec moins de profondeur) pour comprendre la 
 
 Dans @fig-example, on remarque qu'il y a des informations qui sont écrites pour chaque noeud (correspondant à un sous-ensemble plus ou moins grand) :
 
-- la première ligne correspond au seuil donné à une des variables pour prendre une décision (gauche si la condition est vérifiée, droite sinon). C'est pourquoi cette ligne n'esixte pas sur les noeuds terminaux.
-- la valeur du critère (ici entropie) pour les variables présente dans le sous-ensemble 
-- le nombre d'individu total dans le sous-ensemble 
-- la répartition des individus pour chaque groupe
+- la première ligne correspond au seuil donné à une des variables pour prendre une décision (gauche si la condition est vérifiée, droite sinon). C'est pourquoi cette ligne n'existe pas sur les noeuds terminaux.
+- la seconde ligne correspond à la valeur du critère (ici entropie) pour les individus présents dans le sous-ensemble 
+- la troisième ligne correspond à le nombre d'individu total dans le sous-ensemble 
+- la dernière ligne correspond à la répartition des individus pour chaque groupe
 
 Par exemple, si un individu a pour variable $x=(2,-1)'$, on décidera dans le premier noeud d'aller au noeud intermédiaire de droite dans un premier temps, puis finir par celui de gauche. Le groupe décidé sera celui qui prédomine dans le sous ensemble : dans notre exemple, on voit que ce sera le groupe 2.
 
@@ -185,7 +185,6 @@ Y_test = np.asarray(data_test[:,-1], dtype=int)
 ```
 
 Nous allons tracer une nouvelle courbe d'erreur en fonction de la profondeur de l'arbre :
-
 
 ```{python}
 #| echo: false
@@ -213,10 +212,10 @@ for i in range(dmax):
 plt.figure(figsize=(6,3.2))
 plt.plot(1-scores_entropy)
 plt.plot(1-scores_gini)
-plt.legend(['entropy', 'gini'])
-plt.xlabel('Max depth')
-plt.ylabel('Accuracy Score')
-plt.title("Testing error")
+plt.legend(['Entropie', 'Gini'])
+plt.xlabel('Profondeur maximale', fontsize=12)
+plt.ylabel("Taux d'erreur", fontsize=12)
+plt.title("Courbe d'erreur test", fontsize=15)
 ```
 
 Ici, on constate une nette chute au début pour les petites valeurs de la profondeur puis une stabilisation au bout d'un certain nombre : on voit ici qu'il est inutile d'augmenter la profondeur de l'arbre, le taux d'erreur ne semble ne pas vouloir s'améliorer.
@@ -224,9 +223,9 @@ Ici, on constate une nette chute au début pour les petites valeurs de la profon
 
 ## Nouvelle analyse sur les données  `DIGITS`
 
-Nous allons retracer les graphiques précédents sur des données disponible dans le module `sklearn.datasets`: le jeu de données `DIGITS`. 
+Nous allons retracer les graphiques précédents sur des données disponibles dans le module `sklearn.datasets`: le jeu de données `DIGITS`.
 
-A la différence du cas simulé, nous ne pouvons pas produire nous même des données de test. Un moyen de contourner le problème est de paritionner l'ensemble du jeu de données et un échantillon d'apprentissage servant à entraîner le modèle, et un échantillon de test servant à regarder la fiabilité du modèle. On a fait le choix de faire une découpe test/train de taille 80% - 20%.
+A la différence du cas simulé, nous ne pouvons pas produire nous même des données de test. Un moyen de contourner le problème est de paritionner l'ensemble du jeu de données en un échantillon d'apprentissage servant à entraîner le modèle, et en un échantillon de test servant à regarder la fiabilité du modèle. On a fait le choix de faire une découpe test/train de taille 80% - 20%.
 
 ```{python}
 digits = datasets.load_digits()         # Chargement des données
@@ -262,16 +261,17 @@ for i in range(dmax):
     scores_gini[i] = dt_gini.score(X_train,Y_train)
 
 # Affichage des courbes
-plt.figure(figsize=(6,3.2))
+plt.figure(figsize=(6,3))
 plt.plot(1-scores_entropy, label="entropy")
 plt.plot(1-scores_gini, label="gini")
 plt.legend()
-plt.xlabel('Max depth')
-plt.ylabel('Accuracy Score')
+plt.xlabel('Profondeur maximale', fontsize=12)
+plt.ylabel("Taux d'erreur", fontsize=12)
+plt.title("Courbe d'erreur test", fontsize=15)
 plt.draw()
 ```
 
-Mais ce qui nous intéresse c'est bien sur la courbe d'erreur pour les données de test :
+Mais ce qui nous intéresse c'est bien sûr la courbe d'erreur pour les données de test :
 
 ```{python}
 #| echo: false
@@ -300,14 +300,15 @@ plt.figure(figsize=(6,3.2))
 plt.plot(1-scores_entropy, label="entropy")
 plt.plot(1-scores_gini, label="gini")
 plt.legend()
-plt.xlabel('Max depth')
-plt.ylabel('Accuracy Score')
+plt.xlabel('Profondeur maximale', fontsize=12)
+plt.ylabel("Taux d'erreur", fontsize=12)
+plt.title("Courbe d'erreur test", fontsize=15)
 plt.draw()
 ```
 
 Etudions maintenant cette courbe. Comme vu plus haut, on obtient essentiellement le même style d'allure, avec une nette chute sur les premières valeurs puis une stabilisation à partir d'un certain rang. On pourrait avoir la tentation de dire que le meilleur modèle est celui avec la profondeur maximale égale à 6. Cependant, il ne faut pas être aussi hâtif ! 
 
-Regardons deux autres courbes en changeant la parition train/test (modification du paramètre `random_state` dans `train_test_split`). On obient alors les courbes : 
+Regardons deux autres courbes en changeant la parition train/test (modification du paramètre `random_state` dans `train_test_split`). On obient alors les courbes suivantes : 
 
 ```{python}
 #| echo: false
@@ -350,29 +351,31 @@ for i in range(dmax):
     dt_gini2.fit(X_a2,Y_a2)
     scores_gini2[i] = dt_gini2.score(X_t2,Y_t2)
 
+# Affichage des deux courbes
+fig, (ax1, ax2) = plt.subplots(1, 2, sharey=True,figsize=(8, 4))
 
-# Affichage des graphiques
-plt.figure(figsize=(8,5))
+# Première partition
+ax1.plot(1 - scores_entropy1, label="entropy")
+ax1.plot(1 - scores_gini1, label="gini")
+plt.xlabel('Profondeur maximale', fontsize=12)
+plt.ylabel("Taux d'erreur", fontsize=12)
 
-plt.subplot(1,2,1)
-plt.plot(1 - scores_entropy1, label="entropy")
-plt.plot(1 - scores_gini1, label="gini")
-plt.xlabel('Max depth')
-plt.ylabel('Accuracy Score')
+# Deuxième partition
+ax2.plot(1 - scores_entropy2, label="entropy")
+ax2.plot(1 - scores_gini2, label="gini")
+ax2.legend()
+plt.xlabel('Profondeur maximale', fontsize=12)
+plt.ylabel("Taux d'erreur", fontsize=12)
 
-plt.subplot(1,2,2)
-plt.plot(1 - scores_entropy2, label="entropy")
-plt.plot(1 - scores_gini2, label="gini")
-plt.legend()
-plt.xlabel('Max depth')
-
+# Afficher la figure
+fig.suptitle("Courbes d'erreur avec différentes coupes", fontsize=15)
 plt.show()
 ```
 
 Ici, on remarque que :
 
 - les courbes sont différentes en fonction de la partition
-- les minimums ne sont pas atteint par la même profondeur
+- les minimums ne sont pas atteints par la même profondeur
 - cette valeur minimale de l'erreur est différente
 
 Pour pouvoir sélectionner un modèle selon ce critère, nous allons devoir faire en sorte de nous affranchir de cette sensibilité de partitionnement des données. Un moyen de le contourner est de faire de la validation croisée. 
@@ -398,8 +401,10 @@ for i in range(dmax):
 # Affichage de la courbe
 plt.figure(figsize=(6,3.2))
 plt.plot(error)
-best_depth = np.argmin(error)+1
-print("Best depth: ", best_depth)
+plt.title("Courbe d'erreur test", fontsize=15)
+plt.xlabel('Profondeur maximale', fontsize=12)
+plt.ylabel("Taux d'erreur", fontsize=12)
+print("Best depth: ", np.argmin(error)+1)
 ```
 
 Comparée aux courbes d'erreur précédentes, celle-ci semble plus régulière (sûrement un effet de la moyenne). On constate également que l'arbre minimisant l'erreur moyenne est celui de profondeur maximale égale à 26, ce qui est bien différent de ce que l'on avait dans la section précédente. Néanmoins, on remarque que l'on retrouve des taux d'erreur d'ordre similaire aux alentours de 10 : il serait peut être préférable de prendre un arbre de profondeur maximale vers cette valeur (pour l'interprétation par exemple). On choisira donc cette valeur égale à 8 ici.
@@ -412,7 +417,7 @@ Voici l'arbre obtenu :
 
 Nous allons terminer ce TP en traçant la courbe d'apprentissage de notre arbre de décision optimal de profondeur maximale égal à 8.
 
-Cette courbe nous permet de voir rapidement si le modèle sélectionné est raisonnable, dans le sens où on ne se situe pas dans un cadre de sur ou sous-apprentissage. Pour obtenir cette courbe nous allons utiliser la fonction `learning_curve` du module `sklearn.model_selection`.
+Cette courbe nous permet de voir rapidement si le modèle sélectionné est raisonnable, dans le sens où on ne se situe pas dans un cadre de sur ou sous-apprentissage. Pour obtenir cette courbe, nous allons utiliser la fonction `learning_curve` du module `sklearn.model_selection`.
 
 ```{python}
 # Calcul des courbes d'apprentissage
@@ -438,16 +443,17 @@ plt.fill_between(n_samples,
 plt.plot(n_samples, np.mean(train_curve, axis=1),"o-", label="train")
 plt.plot(n_samples, np.mean(test_curve, axis=1), "o-", label="test")
 plt.legend(loc="lower right")
-plt.xlabel("Taille du training set")
-plt.ylabel("Précision")
-plt.title("Courbe d'apprentissage du meilleur arbre")
+plt.xlabel("Taille du training set", fontsize=12)
+plt.ylabel("Précision", fontsize=12)
+plt.title("Courbe d'apprentissage du meilleur arbre", fontsize=15)
 ```
 
 Dans figure, nous avons deux courbes :
 
-- la première (en bleue), représentant le score des données d'apprentissage, semble assez constante avec une valeur proche de 1 : on voit typiquement que notre modèle a très bien appris sur nos donénes d'apprentissage et que donc le cas de sous-apprentissage est peu probable.
+- la première (en bleue), représentant le score des données d'apprentissage, semble assez constante avec une valeur proche de 1 : on voit typiquement que notre modèle a très bien appris sur nos données d'apprentissage et que donc le cas de sous-apprentissage est peu probable.
 - la seconde (en orange), représentant le score de validation croisée, est croissante et semble atteindre une valeur proche des meilleurs scores : on voit ici que notre modèle se généralise très bien, ce qui laisse penser que nous ne sommes pas non plus dans un contexte de sur-apprentissage.
 
+**Remarque** : la petite valeur du score de validation pour de petites tailles peut s'interpréter comme un sous apprentissage entraîné par un échantillon d'apprentissage trop petit.
 
 # Conclusion
 

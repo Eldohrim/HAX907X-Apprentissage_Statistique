@@ -306,6 +306,69 @@ print("Scores with entropy criterion: ", scores_entropy)
 print("Scores with Gini criterion: ", scores_gini)
 
 #%%
+# Erreurs pour d'autres partitionnements
+
+# on fixe de nouveaux découpage de notre échantillon
+X_a1, X_t1, Y_a1, Y_t1 = model_selection.train_test_split(digits.data,
+                                                          digits.target, 
+                                                          test_size=0.8,
+                                                          random_state=21)
+X_a2, X_t2, Y_a2, Y_t2 = model_selection.train_test_split(digits.data,
+                                                          digits.target, 
+                                                          test_size=0.8,
+                                                          random_state=31)                        
+dmax = 15
+scores_entropy1 = np.zeros(dmax)
+scores_gini1 = np.zeros(dmax)
+scores_entropy2 = np.zeros(dmax)
+scores_gini2 = np.zeros(dmax)
+
+for i in range(dmax):
+    # Premier découpage
+    dt_entropy1 = tree.DecisionTreeClassifier(criterion='entropy', 
+                                             max_depth=i+1)
+    dt_entropy1.fit(X_a1,Y_a1)
+    scores_entropy1[i] = dt_entropy1.score(X_t1, Y_t1)
+
+    dt_gini1 = tree.DecisionTreeClassifier(criterion='gini', 
+                                          max_depth=i+1)
+    dt_gini1.fit(X_a1,Y_a1)
+    scores_gini1[i] = dt_gini1.score(X_t1,Y_t1)
+
+    # Deuxième découpage 
+    dt_entropy2 = tree.DecisionTreeClassifier(criterion='entropy', 
+                                             max_depth=i+1)
+    dt_entropy2.fit(X_a2,Y_a2)
+    scores_entropy2[i] = dt_entropy2.score(X_t2, Y_t2)
+
+    dt_gini2 = tree.DecisionTreeClassifier(criterion='gini', 
+                                          max_depth=i+1)
+    dt_gini2.fit(X_a2,Y_a2)
+    scores_gini2[i] = dt_gini2.score(X_t2,Y_t2)
+
+
+# Affichage des deux courbes
+fig, (ax1, ax2) = plt.subplots(1, 2, sharey=True,figsize=(8, 4))
+
+# Première partition
+ax1.plot(1 - scores_entropy1, label="entropy")
+ax1.plot(1 - scores_gini1, label="gini")
+plt.xlabel('Profondeur maximale', fontsize=12)
+plt.ylabel("Taux d'erreur", fontsize=12)
+
+# Deuxième partition
+ax2.plot(1 - scores_entropy2, label="entropy")
+ax2.plot(1 - scores_gini2, label="gini")
+ax2.legend()
+plt.xlabel('Profondeur maximale', fontsize=12)
+plt.ylabel("Taux d'erreur", fontsize=12)
+
+# Afficher la figure
+fig.suptitle("Courbes d'erreur avec différentes coupes", fontsize=15)
+plt.show()
+
+
+#%%
 # Q7. estimer la meilleur profondeur avec un cross_val_score
 from sklearn.model_selection import cross_val_score
 
