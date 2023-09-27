@@ -239,7 +239,7 @@ digits = datasets.load_digits()
 n_samples = len(digits.data)
 X_train, X_test, Y_train, Y_test = model_selection.train_test_split(digits.data,
                                                                     digits.target, 
-                                                                    test_size=0.8)
+                                                                    test_size=0.2)
 
 # Initialisation
 dmax = 15
@@ -311,11 +311,11 @@ print("Scores with Gini criterion: ", scores_gini)
 # on fixe de nouveaux découpage de notre échantillon
 X_a1, X_t1, Y_a1, Y_t1 = model_selection.train_test_split(digits.data,
                                                           digits.target, 
-                                                          test_size=0.8,
+                                                          test_size=0.2,
                                                           random_state=21)
 X_a2, X_t2, Y_a2, Y_t2 = model_selection.train_test_split(digits.data,
                                                           digits.target, 
-                                                          test_size=0.8,
+                                                          test_size=0.2,
                                                           random_state=31)                        
 dmax = 15
 scores_entropy1 = np.zeros(dmax)
