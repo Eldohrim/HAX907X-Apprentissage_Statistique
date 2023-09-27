@@ -10,10 +10,10 @@ $ pip install -r requirements.txt
 
 ## Compilation du fichier Quarto (`.qmd`)
 
-Pour les comptes rendus effectués dans un markdown sous Quarto (les fichiers `.qmd`), on peut compiler ces derniers pour produire un fichier `.pdf` contenant ces derniers. Pour compiler ces derniers, assurez-vous tout d'abord d'avoir bien installé Quarto (avec une commande `pip` par exemple) dans votre environnement, puis placez vous dans le bon dossier dans le terminal est tapez la commande :
+Pour les comptes rendus effectués dans un markdown sous Quarto (les fichiers `.qmd`), on peut compiler ces derniers pour produire un fichier `.pdf` contenant ces derniers. Pour ce faire, assurez-vous tout d'abord d'avoir bien installé Quarto (avec une commande `pip` par exemple) dans votre environnement, puis dans le terminal, placez vous dans le bon dossier et tapez la commande :
 
 ```bash
-$ quarto render tp2.qmd
+$ quarto render file.qmd
 ```
 
 ## Contenu des comptes rendus
