@@ -19,14 +19,14 @@ from sklearn.svm import SVC
 Nous avons alors simulé un échantillon de taille 400, où les classes sont bien équilibrées (`n1=200` et `n2=200`). Voici les points obtenus : 
 
 <p align="center">
-  <img src="./plot/simulation.pdf" width="500" title="Visualisation de la Simulation">
+  <img src="./plot/simulation.png" width="500" title="Visualisation de la Simulation">
 </p>
 
 
 Nous allons donc chercher à calculer le classifieur `SVM` en utilisant un noyau linéaire. Voici la frontière obtenue : 
 
 <p align="center">
-  <img src="./plot/sim_frontiere.pdf" width="500" title="Visualisation de la frontière">
+  <img src="./plot/sim_frontiere.png" width="500" title="Visualisation de la frontière">
 </p>
 
 
@@ -47,7 +47,7 @@ On voit ici qu'il y a un paramètre $C$, à ajuster,  qui va controler la comple
 On obtient alors la frontière suivante :
 
 <p align="center">
-  <img src="./plot/best_sim.pdf" width="500" title="Visualisation de la meilleure frontière">
+  <img src="./plot/best_sim.png" width="500" title="Visualisation de la meilleure frontière">
 </p>
 
 On voit que les frontières n'ont pas tant évoluées ici... On peut alors s'amuser à regarder la valeur du score de prédiction pour nos deux modèles (on a fixé une graine à 20):
@@ -71,7 +71,7 @@ Ici, nous allons utilisé uniquement les classes 1 et 2 du dataset pour rester d
 Bien sur, les paramètres $C$ et $\alpha$ et $\delta$ (dans le noyau polynomial) seront déterminé par validation croisée grâce à la classe `GridSearchCV`. On obtient alors les frontières suivantes :
 
 <p align="center">
-  <img src="./plot/iris_front.pdf" width="500" title="Comparaison des frontières">
+  <img src="./plot/iris_front.png" width="500" title="Comparaison des frontières">
 </p>
 
 

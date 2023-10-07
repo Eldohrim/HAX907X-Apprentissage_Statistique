@@ -39,7 +39,7 @@ plt.ion()
 plt.figure(1, figsize=(15, 5))
 plt.title('First data set')
 plot_2d(X1, y1)
-plt.savefig("./plot/simulation.pdf")
+plt.savefig("./plot/simulation.png")
 
 X_train = X1[::2]
 Y_train = y1[::2].astype(int)
@@ -65,7 +65,7 @@ def f(xx):
 plt.figure()
 frontiere(f, X_train, Y_train, w=None, step=50, alpha_choice=1)
 plt.title("Affichage des frontières par SVM linéaire")
-plt.savefig("./plot/sim_frontiere.pdf")
+plt.savefig("./plot/sim_frontiere.png")
 
 # Same procedure but with a grid search
 parameters = {'kernel': ['linear'], 'C': list(np.linspace(0.001, 3, 21))}
@@ -85,7 +85,7 @@ def f_grid(xx):
 plt.figure()
 frontiere(f_grid, X_train, Y_train, w=None, step=50, alpha_choice=1)
 plt.title("Affichage des frontières avec meilleur paramètre C")
-plt.savefig("./plot/best_sim.pdf")
+plt.savefig("./plot/best_sim.png")
 
 #%%
 ###############################################################################
@@ -166,7 +166,7 @@ frontiere(f_poly, X, y)
 plt.title("polynomial kernel")
 plt.tight_layout()
 plt.draw()
-plt.savefig("./plot/iris_front.pdf")
+plt.savefig("./plot/iris_front.png")
 
 #%%
 ###############################################################################
