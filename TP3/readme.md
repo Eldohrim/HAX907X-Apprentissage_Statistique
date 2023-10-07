@@ -85,9 +85,9 @@ Le script `svm_gui.py` est une application permettant d'évaluer en temps réel 
 
 
 <p float="left">
-  <img src="/plot/svmgui_0.8.png" width="100" />
-  <img src="/plot/svmgui_0.4.png" width="100" /> 
-  <img src="/plot/svmgui_0.1.png" width="100" />
+  <img src="./plot/svmgui_08.png" width="100" />
+  <img src="./plot/svmgui_04.png" width="100" /> 
+  <img src="./plot/svmgui_01.png" width="100" />
 </p>
 
 
