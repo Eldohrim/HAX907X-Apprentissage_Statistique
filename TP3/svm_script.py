@@ -119,13 +119,14 @@ parameters = {'kernel': ['linear'], 'C': list(np.logspace(-3, 3, 200))}
 clf_linear = GridSearchCV(SVC(), parameters, n_jobs=-1)
 clf_linear.fit(X_train, y_train)
 
+print(clf_linear.best_params_)
 print('Generalization score for linear kernel: %s, %s' %
       (clf_linear.score(X_train, y_train),
        clf_linear.score(X_test, y_test)))
 
 #%%
 # Q2 polynomial kernel
-Cs = list(np.logspace(-3, 3, 5))
+Cs = list(np.logspace(-3, 3, 10))
 gammas = 10. ** np.arange(1, 2)
 degrees = np.r_[1, 2, 3]
 

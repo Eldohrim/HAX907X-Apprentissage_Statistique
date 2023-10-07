@@ -75,10 +75,19 @@ Bien sur, les paramètres $C$ et $\alpha$ et $\delta$ (dans le noyau polynomial)
 </p>
 
 
+FINIR 
+
+## SVM GUI
+
+Le script `svm_gui.py` est une application permettant d'évaluer en temps réel l'impact du choix de noyau et du pramètre de régularisation $C$.
 
 
 
 
-
+<p float="left">
+  <img src="/plot/svmgui_0.8.png" width="100" />
+  <img src="/plot/svmgui_0.4.png" width="100" /> 
+  <img src="/plot/svmgui_0.1.png" width="100" />
+</p>
 
 
