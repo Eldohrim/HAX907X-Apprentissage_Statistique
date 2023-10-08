@@ -109,6 +109,7 @@ On constate ici que la séparation effectuée par le classifieur est très varia
 
 ## Classification des visages
 
+<<<<<<< HEAD
 Nous allons maintenant étudier plusieurs effets qui peuvent survenir en pratique. Nous allons pour cela étudier le cas de classifications de visages avec la base de données `fetch_lwd_people` disponible aussi dans la librarie `sklearn.datasets`. Elle contient des images de personnalités politiques américaine.
 
 Pour rester dans un cadre simple, nous allons nous contenter de classifier deux classes d'images : celles de Tony Blair et celles de Colin Powell
@@ -130,6 +131,12 @@ y = np.r_[np.zeros(np.sum(idx0)), np.ones(np.sum(idx1))].astype(int)
 
 <p align="center">
   <img src="./plot/examples.png" width="500" title="SVC pour C=1">
+=======
+<p float="center">
+  <img src="./plot/svmgui_08.png" width="300" />
+  <img src="./plot/svmgui_04.png" width="300" /> 
+  <img src="./plot/svmgui_01.png" width="300" />
+>>>>>>> 54095a2428f73c6e6d8cdd51157723aef9e72e54
 </p>
 
 
