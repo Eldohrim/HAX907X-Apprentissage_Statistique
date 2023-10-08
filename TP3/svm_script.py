@@ -200,7 +200,7 @@ lfw_people = fetch_lfw_people(min_faces_per_person=70, resize=0.4,
 # data_home='.'
 
 # introspect the images arrays to find the shapes (for plotting)
-images = lfw_people.images / 255.
+images = lfw_people.images 
 n_samples, h, w, n_colors = images.shape
 
 # the label to predict is the id of the person
@@ -215,11 +215,8 @@ idx0 = (lfw_people.target == target_names.index(names[0]))
 idx1 = (lfw_people.target == target_names.index(names[1]))
 images = np.r_[images[idx0], images[idx1]]
 n_samples = images.shape[0]
-y = np.r_[np.zeros(np.sum(idx0)), np.ones(np.sum(idx1))].astype(np.int)
+y = np.r_[np.zeros(np.sum(idx0)), np.ones(np.sum(idx1))].astype(int)
 
-# plot a sample set of the data
-plot_gallery(images, np.arange(12))
-plt.show()
 
 #%%
 ####################################################################
@@ -238,10 +235,9 @@ X /= np.std(X, axis=0)
 #%%
 ####################################################################
 # Split data into a half training and half test set
-# X_train, X_test, y_train, y_test, images_train, images_test = \
-#    train_test_split(X, y, images, test_size=0.5, random_state=0)
-# X_train, X_test, y_train, y_test = \
-#    train_test_split(X, y, test_size=0.5, random_state=0)
+X_train, X_test, y_train, y_test, images_train, images_test = \
+    train_test_split(X, y, images, test_size=0.5, random_state=10)
+
 
 indices = np.random.permutation(X.shape[0])
 train_idx, test_idx = indices[:X.shape[0] // 2], indices[X.shape[0] // 2:]
@@ -249,6 +245,10 @@ X_train, X_test = X[train_idx, :], X[test_idx, :]
 y_train, y_test = y[train_idx], y[test_idx]
 images_train, images_test = images[
     train_idx, :, :, :], images[test_idx, :, :, :]
+
+# plot a sample set of the data
+plot_gallery(images_train, [names[i] for i in y_train], n_row=3)
+plt.show()
 
 ####################################################################
 # Quantitative evaluation of the model quality on the test set
@@ -263,7 +263,9 @@ t0 = time()
 Cs = 10. ** np.arange(-5, 6)
 scores = []
 for C in Cs:
-    # TODO ...
+    clf = SVC(kernel='linear', C=C)
+    clf.fit(X_train, y_train)
+    scores.append(clf.score(X_train, y_train))
 
 ind = np.argmax(scores)
 print("Best C: {}".format(Cs[ind]))
@@ -274,16 +276,19 @@ plt.xlabel("Parametres de regularisation C")
 plt.ylabel("Scores d'apprentissage")
 plt.xscale("log")
 plt.tight_layout()
+plt.savefig("./plot/err_train.png")
 plt.show()
+
 print("Best score: {}".format(np.max(scores)))
 
+#%%
 print("Predicting the people names on the testing set")
 t0 = time()
 
-#%%
 # predict labels for the X_test images with the best classifier
-# clf =  ... TODO
-
+clf = SVC(kernel='linear', C=Cs[ind])
+clf.fit(X_train, y_train)
+y_pred = clf.predict(X_test)
 print("done in %0.3fs" % (time() - t0))
 # The chance level is the accuracy that will be reached when constantly predicting the majority class.
 print("Chance level : %s" % max(np.mean(y), 1. - np.mean(y)))
@@ -324,7 +329,7 @@ def run_svm_cv(_X, _y):
           (_clf_linear.score(_X_train, _y_train), _clf_linear.score(_X_test, _y_test)))
 
 print("Score sans variable de nuisance")
-# TODO ... use run_svm_cv on data
+run_svm_cv(X,y)
 
 print("Score avec variable de nuisance")
 n_features = X.shape[1]
@@ -333,12 +338,15 @@ sigma = 1
 noise = sigma * np.random.randn(n_samples, 300, )
 X_noisy = np.concatenate((X, noise), axis=1)
 X_noisy = X_noisy[np.random.permutation(X.shape[0])]
-# TODO ... use run_svm_cv on noisy data
+run_svm_cv(X_noisy,y)
+
 
 #%%
 # Q5
 print("Score apres reduction de dimension")
 
 n_components = 20  # jouer avec ce parametre
-pca = PCA(n_components=n_components).fit(X_noisy)
-# ... TODO
+pca = PCA(n_components=n_components, svd_solver='randomized').fit(X_noisy)
+X_new = X_noisy.dot(pca.components_.T)
+
+run_svm_cv(X_new, y)

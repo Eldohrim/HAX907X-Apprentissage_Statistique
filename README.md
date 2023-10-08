@@ -39,4 +39,12 @@ $  conda install python-graphviz
 Le compte rendu est en format `.qmd`.
 
 
-### TP3 ???
+### TP3 - SVM
+
+Dans ce TP, nous allons utiliser un classifieur SVM avec noyau pour de la classfication binaire (même si on peut l'étendre au cadre multi-classe). Nous avons pu construire nos premiers modèles et étudier l'effet du paramètre de régularisation dans le calcul du classifieur pour différents exemples, et voir les potentiels problèmes qu'entraînent la trop grand présence de variables de bruits.
+
+
+Le compte rendu est en format `.md`.
+
+
+### TP4 - ???
